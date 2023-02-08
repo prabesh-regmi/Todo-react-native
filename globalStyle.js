@@ -4,7 +4,7 @@ import {
 } from 'react-native';export default StyleSheet.create({
   container: {
     flex: 1,
-    marginHorizontal:15,
+    paddingHorizontal:15,
     paddingTop: StatusBar.currentHeight,
     backgroundColor:'#F8F8F8'
   },

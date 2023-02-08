@@ -30,8 +30,11 @@ const Signup = ({navigation}) => {
   const handleSignup = ()=>{
     createUserWithEmailAndPassword(auth,email,password1)
     .then(userCredentials =>{
-      const user =userCredentials.user;
-      console.log(user.email)
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'Login'}],
+      });
+      
     })
     .catch(error=>alert(error.message));
   }
