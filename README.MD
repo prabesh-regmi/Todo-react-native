@@ -18,10 +18,10 @@ And then scan the qrcode generated in console
 # Screenshots
 
 ### Login
-![Login Image](/Screenshots/login.jpg)
+![Login Image](/Screenshots/login.png)
 ### Sign up
-![Sign up Image](/Screenshots/signup.jpg)
+![Sign up Image](/Screenshots/signup.png)
 ### Home
-![Home Image](/Screenshots/home.jpg)
+![Home Image](/Screenshots/home.png)
 ### CreateTask
-![Create Task Image](/Screenshots/createtask.jpg)
+![Create Task Image](/Screenshots/createtask.png)
