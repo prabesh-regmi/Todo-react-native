@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
+import DropDownPicker from "react-native-dropdown-picker";
+import { getDatabase, ref, push, set,child } from "firebase/database";
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -8,40 +10,66 @@ import {
   View,
 } from "react-native";
 import styles from "../globalStyle";
-const CreateNewTask = () => {
+import {auth, db} from "../firebase/";
+
+
+const CreateNewTask = ({route, navigation}) => {
+  const [task, setTask] = useState('');
+  const [openPriority, setOpenPriority] = useState(false);
+  const [priorityValue, setPriorityValue] = useState(null);
+  const [priorityItems, setPriorityItems] = useState([
+    {label: 'High', value: 'High'},
+    {label: 'Medium', value: 'Medium'},
+    {label: 'Low', value: 'Low'}
+  ]);
+  const handleAddTaskData = ()=>{
+    if(task.length>2 && priorityValue?.length>0){
+      const user =auth.currentUser
+      const newTodoRef = push(ref(db, 'todos/' + user.uid));
+      const newTodo = {
+        id:newTodoRef.key,
+        title:task,
+        priority:priorityValue,
+        completed:false,
+        createdBy: user.email,
+        createdAt: `${new Date()}`
+      };
+
+      set(newTodoRef, newTodo).then(()=>{
+        navigation.navigate("Home");
+      }).catch((error) => {
+        alert(error?.message)
+      });
+
+    }
+  };
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
+
       <View>
         <View style={styles.formControl}>
-          <Text style={styles.labelText}>Email</Text>
+          <Text style={styles.labelText}>Task Name</Text>
           <TextInput
-            style={styles.inputField}
-            placeholder="Enter your email address"
-          />
+          value={task} onChangeText={(text) => setTask(text)}
+          style={styles.inputField}
+           placeholder="Enter task name" />
         </View>
         <View style={styles.formControl}>
-          <Text style={styles.labelText}>Email</Text>
-          <TextInput
-            style={styles.inputField}
-            placeholder="Enter your email address"
+          <Text style={styles.labelText}>Priority</Text>
+          <DropDownPicker
+          style={styles.inputField}
+            open={openPriority}
+            value={priorityValue}
+            items={priorityItems}
+            setOpen={setOpenPriority}
+            setValue={setPriorityValue}
+            setItems={setPriorityItems}
           />
         </View>
-        <View style={styles.formControl}>
-          <Text style={styles.labelText}>Email</Text>
-          <TextInput
-            style={styles.inputField}
-            placeholder="Enter your email address"
-          />
-        </View>
-        <View style={styles.formControl}>
-          <Text style={styles.labelText}>Email</Text>
-          <TextInput
-            style={styles.inputField}
-            placeholder="Enter your email address"
-          />
-        </View>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Login</Text>
+        <TouchableOpacity 
+        onPress={handleAddTaskData}
+        style={styles.button}>
+          <Text style={styles.buttonText}>Add Task</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
