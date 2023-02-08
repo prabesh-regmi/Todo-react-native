@@ -1,9 +1,12 @@
-import { StyleSheet } from "react-native";
-export default StyleSheet.create({
+import {
+  StyleSheet,
+  StatusBar,
+} from 'react-native';export default StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 50,
-    marginHorizontal: 15,
+    marginHorizontal:15,
+    paddingTop: StatusBar.currentHeight,
+    backgroundColor:'#F8F8F8'
   },
   heading: {
     marginTop: 35,

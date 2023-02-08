@@ -1,4 +1,5 @@
-import React from "react";
+import { useState, useEffect } from "react";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -6,9 +7,36 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  ToastAndroid,
 } from "react-native";
 import globalStyles from "../globalStyle";
-const Login = () => {
+import {auth} from "../firebase/";
+const Login = ({ navigation }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  // const auth = getAuth();
+  useEffect(() => {
+    if (auth.currentUser){
+      navigation.navigate("Home");
+    }
+  }, []);
+  
+  const loginHandler = () => {
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        ToastAndroid.show("You are logged in!!", ToastAndroid.SHORT);
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'Home'}],
+        });
+        // ...
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  };
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <Text style={styles.heading}>Login to your account</Text>
@@ -20,6 +48,8 @@ const Login = () => {
         <TextInput
           style={styles.inputField}
           placeholder="Enter your email address"
+          value={email}
+          onChangeText={(text) => setEmail(text)}
         />
       </View>
       <View style={styles.formControl}>
@@ -28,29 +58,34 @@ const Login = () => {
           style={styles.inputField}
           secureTextEntry
           placeholder="Enter your password"
+          value={password}
+          onChangeText={(text) => setPassword(text)}
         />
       </View>
       <Text style={styles.forgetPasswordText}>Forget password ?</Text>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={loginHandler}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
       <View style={styles.notRegisterText}>
         <Text>Not registered yet?</Text>
-        <TouchableOpacity style={styles.name}>
+        <TouchableOpacity
+        onPress={()=> navigation.navigate("Signup")}
+         style={styles.name}>
           <Text style={styles.createAccountText}> Create an account</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
   );
 };
-const styles ={...globalStyles,
-    forgetPasswordText: {
-        fontFamily: "Roboto",
-        color: "#BE263B",
-        fontWeight: "700",
-        marginBottom: 20,
-      },
-}
+const styles = {
+  ...globalStyles,
+  forgetPasswordText: {
+    fontFamily: "Roboto",
+    color: "#BE263B",
+    fontWeight: "700",
+    marginBottom: 20,
+  },
+};
 // const styles = StyleSheet.create({
 //   container: {
 //     flex: 1,

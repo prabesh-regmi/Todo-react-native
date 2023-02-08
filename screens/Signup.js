@@ -1,4 +1,5 @@
-import React from "react";
+import { useState, React,useEffect } from "react";
+import { getAuth, signOut, createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -7,8 +8,44 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+// import { auth } from "../firebase";
 import styles from "../globalStyle";
-const Signup = () => {
+import {auth} from '../firebase'
+const Signup = ({navigation}) => {
+  useEffect(() => {
+    if (auth.currentUser){
+      signOut(auth).then(() => {
+        // Sign-out successful.
+      }).catch((error) => {
+        // An error happened.
+        alert(error.message)
+      });
+    }
+  }, [])
+  const [email, setEmail] = useState('');
+  const [password1, setPassword1] = useState('');
+  const [password2, setPassword2] = useState('');
+
+  
+  const handleSignup = ()=>{
+    createUserWithEmailAndPassword(auth,email,password1)
+    .then(userCredentials =>{
+      const user =userCredentials.user;
+      console.log(user.email)
+    })
+    .catch(error=>alert(error.message));
+  }
+  // onAuthStateChanged(auth, (user) => {
+  //   if (user) {
+  //     // User is signed in, see docs for a list of available properties
+  //     // https://firebase.google.com/docs/reference/js/firebase.User
+  //     const uid = user.uid;
+  //     // ...
+  //   } else {
+  //     // User is signed out
+  //     // ...
+  //   }
+  // });
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <Text style={styles.heading}>Create an account</Text>
@@ -20,6 +57,8 @@ const Signup = () => {
         <TextInput
           style={styles.inputField}
           placeholder="Enter your email address"
+          value={email}
+          onChangeText={text => setEmail(text)}
         />
       </View>
       <View style={styles.formControl}>
@@ -28,6 +67,8 @@ const Signup = () => {
           style={styles.inputField}
           secureTextEntry
           placeholder="Enter your password"
+          value={password1}
+          onChangeText={text => setPassword1(text)}
         />
       </View>
       <View style={styles.formControl}>
@@ -36,14 +77,21 @@ const Signup = () => {
           style={styles.inputField}
           secureTextEntry
           placeholder="Enter your password"
+          value={password2}
+          onChangeText={text => setPassword2(text)}
         />
       </View>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity
+      style={styles.button}
+      onPress={handleSignup}
+      >
         <Text style={styles.buttonText}>Signup</Text>
       </TouchableOpacity>
       <View style={styles.notRegisterText}>
         <Text>Already have an account?</Text>
-        <TouchableOpacity style={styles.name}>
+        <TouchableOpacity
+        onPress={()=>navigation.navigate("Login")}
+         style={styles.name}>
           <Text style={styles.createAccountText}> Login</Text>
         </TouchableOpacity>
       </View>
